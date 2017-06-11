@@ -84,7 +84,6 @@
                 dataType: 'json',
                 success:function(resp)
                 {
-                  //reload your page after review example
                    window.location.reload();
                 }
             });
