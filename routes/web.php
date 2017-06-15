@@ -22,6 +22,7 @@
     Route::group(['middleware' => 'auth'], function () {
 
         Route::get('topics', ['as' => 'topic-list', 'uses' => 'TopicsController@index']);
+        Route::get('browse_topics', ['as' => 'browse-topic-list', 'uses' => 'TopicsController@browse']);
         Route::get('topics/{topicId}', ['as' => 'topic-show', 'uses' => 'TopicsController@show']);
         Route::post('topics', ['as' => 'topic-post', 'uses' => 'TopicsController@store']);
 
@@ -35,14 +36,17 @@
         Route::post('select-ajax', ['as' => 'select-ajax', 'uses' => 'AjaxController@selectAjax']);
 
         Route::get('examples/articles/{articleId}', ['as' => 'example-list', 'uses' => 'ExamplesController@index']);
+        Route::get('examples/articles-quiz/{articleId}', ['as' => 'example-quiz-list', 'uses' => 'ExamplesController@quizIndex']);
         Route::get('examples/{exampleId}', ['as' => 'example-show', 'uses' => 'ExamplesController@show']);
-        Route::post('examples', ['as' => 'example-post', 'uses' => 'ExamplesController@store']);
 
-        Route::post('/examples/{exampleId}/approve', ['as' => 'example-approve', 'uses' => 'ExamplesController@approve']);
-        Route::post('/examples/{exampleId}/reject', ['as' => 'example-reject', 'uses' => 'ExamplesController@reject']);
+
+        Route::post('examples', ['as' => 'example-post', 'uses' => 'ExamplesController@store']);
+        Route::post('examples-quiz', ['as' => 'example-option-post', 'uses' => 'ExamplesController@storeOption']);
 
         Route::patch('/examples/{exampleId}/review', ['as' => 'example-review', 'uses' => 'ExamplesController@review']);
+        Route::patch('/examples/{exampleId}/set-answer', ['as' => 'example-set-answer', 'uses' => 'ExamplesController@setAnswer']);
 
+        Route::patch('/examples/{exampleId}/give-answer', ['as' => 'example-give-answer', 'uses' => 'ExamplesController@giveAnswer']);
     });
 
     Auth::routes();

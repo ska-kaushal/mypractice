@@ -13,7 +13,9 @@ let mix = require('laravel-mix');
 
 mix.js('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')
-    .sass('resources/assets/sass/1-col-portfolio.scss', 'public/css');
+    .sass('resources/assets/sass/1-col-portfolio.scss', 'public/css')
+    .js('resources/assets/js/mypractice.js', 'public/js')
+;
 
 mix.autoload({
     jquery: ['$', 'window.jQuery']

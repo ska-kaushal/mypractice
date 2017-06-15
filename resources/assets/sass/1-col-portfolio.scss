@@ -11,8 +11,16 @@
     padding:0px !important;
 }
 
+.nav-tabs h5{
+    margin-top: 0px!important;
+    margin-bottom: 0px!important;
+}
 .list-group-item .pagination {margin:2px!important;  }
 
+.quiz-option-list:hover .setAnswer{
+display: block;
+}
+.setAnswer {display: none;}
 
 /** The Magic **/
 .btn-breadcrumb .btn:not(:last-child):after {

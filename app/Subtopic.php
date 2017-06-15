@@ -6,15 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subtopic extends Model
 {
-    //
-    static public function getActiveSubtopics(){
 
-        return Subtopic::where(['subtopic_status'=>'1'])
-            ->orderBy('seq_id', 'asc')->pluck('subtopic_name', 'subtopic_id');
+    protected $table = 'subtopics';
+    protected $primaryKey = 'subtopic_id';
+
+    /**
+     * Get the topic from the subtopics.
+     */
+    public function topics(){
+
+        return $this->belongsTo('\App\Topics','topic_id');
     }
-    static public function getSubtopicById($subtopicId){
 
-        return Subtopic::where(['subtopic_status'=>'1','subtopic_id'=>$subtopicId])
-            ->orderBy('seq_id', 'asc')->first();
+    /**
+     * Get the article for the subtopics.
+     */
+    public function articles()
+    {
+        return $this->hasMany('\App\Article','subtopic_id');
+    }
+
+    public function users()
+    {
+        return $this->hasOne('\App\User','id','created_by');
     }
 }

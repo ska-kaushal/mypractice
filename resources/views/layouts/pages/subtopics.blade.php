@@ -10,9 +10,13 @@
                         <h4>
                             Subtopics
                             <span class="pull-right">
-                                <a href='{{route('topic-list')}}' class="btn btn-xs btn-primary">
-                                   Back
-                                </a>
+                                @if(isset($topicDetail))
+                                    @if($topicDetail->created_by == auth()->id())
+                                        <a href="{{route('topic-list')}}" class="btn btn-primary btn-xs">Back</a>
+                                    @else
+                                        <a href="{{route('browse-topic-list')}}" class="btn btn-primary btn-xs">Back</a>
+                                    @endif
+                                @endif
                             </span>
                         </h4>
                     </div>
@@ -20,9 +24,13 @@
                         <div class="list-group">
                             @if(!$subtopics->isEmpty())
                                 @foreach($subtopics as $subtopic)
-                                    <a class="list-group-item list-group-item" href="{{route('article-list',[$subtopic->subtopic_id])}}">
+                                    <a class="list-group-item list-group-item"
+                                       href="{{route('article-list',[$subtopic->subtopic_id])}}">
                                         <h4 class="list-group-item-heading">{{$subtopic->subtopic_name}}</h4>
                                         <p class="list-group-item-text">{{$subtopic->subtopic_description}}</p>
+                                        <p class="pull_right text-right creted-by-txt list-group-item-text">
+                                            <small>~ {{$subtopic->users->name}}</small>
+                                        </p>
                                     </a>
                                 @endforeach
                                 @if ($subtopics->hasMorePages())
@@ -40,22 +48,25 @@
                             <form name="frmAddSubTopic" action="{{route('subtopic-post')}}" method="post">
                                 {{csrf_field()}}
                                 <div class="form-group">
-                                    <label style="margin: 0 5px;" >{{$topicDetail->topic_name}}</label>
+                                    <label style="margin: 0 5px;">{{$topicDetail->topic_name}}</label>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control"  type="hidden" value="{{$topicId}}" name="hdnTopicId" id="hdnTopicId" >
+                                    <input class="form-control" type="hidden" value="{{$topicId}}" name="hdnTopicId"
+                                           id="hdnTopicId">
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control"  type="text" placeholder="Add Subtopic" name="txtSubtopicName" id="txtSubtopicName" >
+                                    <input class="form-control" type="text" placeholder="Add Subtopic"
+                                           name="txtSubtopicName" id="txtSubtopicName">
                                 </div>
                                 <div class="form-group">
-                                    <textarea class="form-control"  placeholder="Add Description" name="txtSubtopicDesc" id="txtSubtopicDesc" row="3" ></textarea>
+                                    <textarea class="form-control" placeholder="Add Description" name="txtSubtopicDesc"
+                                              id="txtSubtopicDesc" row="3"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">Add Subtopic</button>
                                 </div>
                             </form>
-                        @include('layouts.errors')
+                            @include('layouts.errors')
                         @else
                             <p>&nbsp;</p>
                         @endif
@@ -66,11 +77,10 @@
     </div>
 
     <div class="starter-template">
-    <div class="col-md-10 col-md-offset-1">
+        <div class="col-md-10 col-md-offset-1">
 
 
-
-    </div>
+        </div>
     </div>
 
 

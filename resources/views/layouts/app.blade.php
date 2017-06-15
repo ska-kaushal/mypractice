@@ -8,10 +8,11 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'My Practice') }}</title>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
     <link href="{{ asset('css/bootstrap-grid.min.css') }}" rel="stylesheet" type="text/css" >
     <!-- Custom CSS -->
     <link href="{{ asset('css/1-col-portfolio.css') }}" rel="stylesheet" type="text/css" >
@@ -33,7 +34,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
+                        {{ config('app.name', 'My Practice') }}
                     </a>
                 </div>
 
@@ -74,21 +75,7 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/jquery.js') }}"></script>
-    <script type="text/javascript">
-        function exampleReview(example,status) {
-            var exampleId = example.id;
-            $.ajax({
-                data:{ exampleId:exampleId, status:status , _method: "PATCH", '_token':'{!! csrf_token() !!}'},
-                url: '/examples/'+exampleId+'/review',
-                type: 'PATCH',
-                dataType: 'json',
-                success:function(resp)
-                {
-                  //reload your page after review example
-                   window.location.reload();
-                }
-            });
-        }
-    </script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/mypractice.js') }}"></script>
 </body>
 </html>

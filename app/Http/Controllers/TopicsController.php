@@ -18,9 +18,15 @@ class TopicsController extends Controller
     public function index()
     {
         //GET /topics
-        $topics = Topics::where(['topic_status'=>'1'])->paginate(5);
+        $topics = Topics::where(['topic_status' => '1', 'created_by' => auth()->id()])->orderby('topic_id','desc')->paginate(5);
+        return view('layouts.pages.topics', compact('topics'));
+    }
 
-        return view('layouts.pages.topics',compact('topics'));
+    public function browse()
+    {
+        //GET /topics
+        $browseTopics = Topics::has('articles')->with('users')->where('topics.created_by', '!=', auth()->id())->orderby('topic_id','desc')->paginate(5);
+        return view('layouts.pages.browse-topics', compact('browseTopics'));
     }
 
     /**
@@ -36,23 +42,23 @@ class TopicsController extends Controller
     /**
      * Store a newly created topic in topics table.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         //POST /topics
 
-        $this->validate(request(),[
+        $this->validate(request(), [
             'txtTopicName' => 'required',
             'txtTopicDesc' => 'required',
         ],
-        [
-            'txtTopicName.required' => 'Topic name is required',
-            'txtTopicDesc.required' => 'Topic description is required'
-        ]);
+            [
+                'txtTopicName.required' => 'Topic name is required',
+                'txtTopicDesc.required' => 'Topic description is required'
+            ]);
 
-        try{
+        try {
             $topic = new Topics;
 
             $topic->topic_name = request('txtTopicName');
@@ -62,10 +68,10 @@ class TopicsController extends Controller
             $topic->seq_id = 1;
             $topic->save();
 
-            return redirect("/topics");
+            return redirect()->back()->with('message', 'Topic added Successfully');
 
-        }catch (Exception $exception){
-            dd($exception);
+        } catch (Exception $exception) {
+            return redirect()->back()->with('error', 'Something goes wrong');
         }
 
         /*
@@ -85,20 +91,20 @@ class TopicsController extends Controller
      * NOT NEEDED BECAUSE CLICK ON TOPIC WILL REDIRECT TO LIST OF SUBTOPICS
      * Display the specified topic.
      *
-     * @param  int  $topicId
+     * @param  int $topicId
      * @return \Illuminate\Http\Response
      */
     public function show($topicId)
     {
         //GET /topics/topic_id
-        $topics = Topics::where(['topic_id'=>$topicId,'topic_status'=>'1'])->get();
-        return view('topics',compact('topics'));
+        $topics = Topics::where(['topic_id' => $topicId, 'topic_status' => '1'])->get();
+        return view('topics', compact('topics'));
     }
 
     /**
      * Show the form for editing the specified topic.
      *
-     * @param  int  $topicId
+     * @param  int $topicId
      * @return \Illuminate\Http\Response
      */
     public function edit($topicId)
@@ -109,8 +115,8 @@ class TopicsController extends Controller
     /**
      * Update the specified topic in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $topicId
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $topicId
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $topicId)
@@ -121,7 +127,7 @@ class TopicsController extends Controller
     /**
      * Remove the specified topic from storage.
      *
-     * @param  int  $topicId
+     * @param  int $topicId
      * @return \Illuminate\Http\Response
      */
     public function destroy($topicId)

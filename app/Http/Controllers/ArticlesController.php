@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use App\Subtopic;
-use App\Topics;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
@@ -21,11 +19,17 @@ class ArticlesController extends Controller
     public function index($subtopicId)
     {
         //GET /articles/subtopics/topics/subtopic_id
-        $articles = Article::where(['subtopic_id'=>$subtopicId,'article_status'=>'1','is_approved'=>'1'])->paginate(5);
 
-        $subtopicDetail = Subtopic::getSubtopicById($subtopicId);
+        $articles = Article::with('users')->where(['subtopic_id'=>$subtopicId,'article_status'=>'1','is_approved'=>'1'])->orderby('article_id','desc')->paginate(5);
+        $topicDetail = Subtopic::find($subtopicId)->topics()->where(['topic_status'=>'1'])->first();
+        $subtopicDetail = Subtopic::where(['subtopic_id'=>$subtopicId])->first();
         $topicId = $subtopicDetail->topic_id;
-        $topicDetail = Topics::getTopicById($topicId);
+
+        if($subtopicDetail->created_by == auth()->id())
+            $articles = Article::where(['subtopic_id'=>$subtopicId,'article_status'=>'1'])->orderby('article_id','desc')->paginate(5);
+        else{
+            $articles = Article::has('examples')->where(['article_status'=>'1','subtopic_id'=>$subtopicId])->orderby('article_id','desc')->paginate(5);
+        }
 
         return view('layouts.pages.articles',compact(['articles','topicId','subtopicId','topicDetail','subtopicDetail']));
     }
@@ -78,10 +82,10 @@ class ArticlesController extends Controller
             $article->seq_id = 1;
             $article->save();
 
-            return redirect("/articles/subtopics/".$subtopicId);
+            return redirect()->back()->with('message', 'Article added Successfully');
 
-        }catch (Exception $exception){
-            dd($exception);
+        } catch (Exception $exception) {
+            return redirect()->back()->with('error', 'Something goes wrong');
         }
     }
 
