@@ -47,6 +47,8 @@
         Route::patch('/examples/{exampleId}/set-answer', ['as' => 'example-set-answer', 'uses' => 'ExamplesController@setAnswer']);
 
         Route::patch('/examples/{exampleId}/give-answer', ['as' => 'example-give-answer', 'uses' => 'ExamplesController@giveAnswer']);
+        Route::get('example-statistics', ['as' => 'example-statistics', 'uses' => 'TopicsController@statisticsExample']);
+        Route::get('quiz-statistics', ['as' => 'quiz-statistics', 'uses' => 'TopicsController@statisticsQuiz']);
     });
 
     Auth::routes();

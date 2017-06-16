@@ -144,11 +144,10 @@
                                     <div class="list-group-item list-group-heading quiz-option-list">
                                         <h5>User Answers</h5>
                                     </div>
-                                    @if(!$examples->isEmpty())
+                                    @if(!$examples->isEmpty() && count($userExamples) >0)
                                         @foreach($examples as $example)
-                                            @if(count($userExamples) >0)
                                                 @foreach($userExamples as $userExample)
-                                                    @if($example->example_id == $userExample->example_id && $example->is_answer=='1')
+                                                    @if($example->example_id == $userExample->example_id && $example->is_answer=='1' && $userExample->created_by != $example->created_by)
                                                         <div class="list-group-item list-group-item-success quiz-option-list">
                                                             <h5 class="list-group-item-heading row ">
                                                                 <label class="form-check-label col-1 text-center input "
@@ -167,7 +166,7 @@
                                                                 </label>
                                                             </h5>
                                                         </div>
-                                                    @elseif($example->example_id == $userExample->example_id && $example->is_answer!='1')
+                                                    @elseif($example->example_id == $userExample->example_id && $example->is_answer!='1' && $userExample->created_by != $example->created_by)
                                                         <div class="list-group-item list-group-item-danger quiz-option-list">
                                                             <h5 class="list-group-item-heading row ">
                                                                 <label class="form-check-label col-1 text-center input "
@@ -192,22 +191,17 @@
                                                     <div class="list-group-item text-center"
                                                          href="#">{{ $userExamples->links() }}</div>
                                                 @endif
-                                            @else
-                                                <div class="list-group-item text-center" href="#">No User Answers are
-                                                    found
-                                                </div>
+                                            @endforeach
+                                            @if ($examples->hasMorePages())
+                                                <div class="list-group-item text-center"
+                                                     href="#">{{ $examples->links() }}</div>
                                             @endif
-
-                                        @endforeach
-                                        @if ($examples->hasMorePages())
-                                            <div class="list-group-item text-center"
-                                                 href="#">{{ $examples->links() }}</div>
+                                        @else
+                                            <div class="list-group-item text-center" href="#">No Options are found</div>
                                         @endif
-                                    @else
-                                        <div class="list-group-item text-center" href="#">No Options are found</div>
-                                    @endif
-                                    @endif
                                 </div>
+                            @endif
+
                         </div>
                         <div class="panel-footer">
                             @if($articleDetail->created_by == auth()->id())
@@ -227,7 +221,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-10 no_margin">
-                                            <input class="form-control" placeholder="Add Your Example" name="txtExample"
+                                            <input class="form-control" placeholder="Add Your Option" name="txtExample"
                                                    id="txtExample">
                                         </div>
                                         <div class="col-2 no_margin">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Subtopic;
+use App\Topics;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
@@ -21,7 +22,7 @@ class SubtopicsController extends Controller
      */
     public function index($topicId)
     {
-        $topicDetail = Subtopic::find($topicId)->topics()->where(['topic_status' => '1'])->first();
+        $topicDetail = Topics::where(['topic_id'=>$topicId,'topic_status' => '1'])->first();
 
         if ($topicDetail->created_by == auth()->id())
             $subtopics = Subtopic::where(['topic_id' => $topicId, 'subtopic_status' => '1'])->orderby('subtopic_id','desc')->paginate(5);

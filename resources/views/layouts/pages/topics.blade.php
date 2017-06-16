@@ -11,6 +11,7 @@
                         <ul class="nav nav-tabs" style="margin-bottom: -11px!important;">
                             <li class="active"><a href="#tab1default" data-toggle="tab"><h5>My Topics</h5></a></li>
                             <li><a href="{{route('browse-topic-list')}}"><h5>Browse Topics</h5></a></li>
+                            <li class=""><a href="{{route('example-statistics')}}"><h5>Statistics</h5></a></li>
                         </ul>
                     </div>
                     <div class="panel-body">

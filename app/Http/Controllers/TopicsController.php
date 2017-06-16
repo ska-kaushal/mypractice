@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Topics;
+use App\Userexample;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Khill\Lavacharts\Lavacharts;
 use Mockery\Exception;
 
 class TopicsController extends Controller
@@ -27,6 +29,102 @@ class TopicsController extends Controller
         //GET /topics
         $browseTopics = Topics::has('articles')->with('users')->where('topics.created_by', '!=', auth()->id())->orderby('topic_id','desc')->paginate(5);
         return view('layouts.pages.browse-topics', compact('browseTopics'));
+    }
+
+    public function statistics(){
+
+        return view('layouts.pages.statistics');
+    }
+
+    public function statisticsExample()
+    {
+        //GET /topics
+        $exampleStat = DB::table('userexamples')
+            ->select(DB::raw('count(*) as total'), 'is_approved')
+            ->where(['example_type'=>'0'])
+            ->whereNull('example_id')
+            ->groupBy('is_approved')
+            ->orderBy('is_approved')
+            ->pluck('total');
+
+        if(count($exampleStat) > 0){
+
+            $rejectReview    = $exampleStat[0];
+            $approveReview   = $exampleStat[1];
+            $pendingReview  = $exampleStat[2];
+
+            $totalReview = (integer)($rejectReview + $approveReview + $pendingReview);
+
+            $rejectPer  = ($rejectReview * 100)/ $totalReview;
+            $approvePer = ($approveReview * 100)/ $totalReview;
+            $pendingPer = ($pendingReview * 100)/ $totalReview;
+
+            $lava = new Lavacharts; // See note below for Laravel
+
+            $reasons = $lava->DataTable();
+
+            $reasons->addStringColumn('Example')
+                ->addNumberColumn('Percent')
+                ->addRow(['Approved Request', $approvePer])
+                ->addRow(['Rejected Request', $rejectPer])
+                ->addRow(['Pending Request', $pendingPer]);
+
+            $lava->PieChart('Example Review', $reasons, [
+                'title'  => 'Example Review',
+                'is3D'   => false,
+                'slices' => [
+                    ['offset' => 0.0],
+                    ['offset' => 0.0]
+                ]
+            ]);
+
+            echo $lava->render('PieChart', 'Example Review', 'chart-div');
+        }
+         return view()->make('layouts.pages.example-statistics');
+    }
+
+    public function statisticsQuiz()
+    {
+        //GET /topics
+        $quizStat = DB::table('userexamples')
+            ->select(DB::raw('count(*) as total'), 'examples.is_answer')
+            ->leftJoin('examples', ['userexamples.example_id' => 'examples.example_id'])
+            ->where(['userexamples.example_type'=>'1','examples.example_type'=>'1'])
+            ->whereNotNull('userexamples.example_id')
+            ->groupBy('examples.is_answer')
+            ->orderBy('examples.is_answer')
+            ->pluck('total');
+
+        if(count($quizStat) > 0){
+            $wrong = $quizStat[0];
+            $correct = $quizStat[1];
+            $total = (integer)$wrong+$correct;
+
+            $wrongPer = ($wrong * 100)/ $total;
+            $correctPer = ($correct * 100)/ $total;
+
+            $lava = new Lavacharts; // See note below for Laravel
+
+            $reasons = $lava->DataTable();
+
+            $reasons->addStringColumn('Quiz')
+                ->addNumberColumn('Percent')
+                ->addRow(['Correct Answer', $correctPer])
+                ->addRow(['Wrong Answer', $wrongPer]);
+
+            $lava->PieChart('Quiz Review', $reasons, [
+                'title'  => 'Quiz Review',
+                'is3D'   => false,
+                'slices' => [
+                    ['offset' => 0.0]
+                ]
+            ]);
+
+            echo $lava->render('PieChart', 'Quiz Review', 'chart-div-2');
+        }
+
+         return view()->make('layouts.pages.quiz-statistics');
+
     }
 
     /**

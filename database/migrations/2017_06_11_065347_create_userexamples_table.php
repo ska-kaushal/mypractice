@@ -27,17 +27,6 @@ class CreateUserExamplesTable extends Migration
             $table->integer('approved_by');
             $table->integer('seq_id');
             $table->timestamps();
-
-            $table->foreign('topic_id')
-                ->references('topic_id')->on('topics')
-                ->onDelete('cascade');
-            $table->foreign('subtopic_id')
-                ->references('subtopic_id')->on('subtopics')
-                ->onDelete('cascade');
-            $table->foreign('article_id')
-                ->references('article_id')->on('articles')
-                ->onDelete('cascade');
-
         });
 
         $faker = Faker\Factory::create();
@@ -46,7 +35,8 @@ class CreateUserExamplesTable extends Migration
 
         for ($i = 0; $i < $limit; $i++) {
 
-            $example = \App\Example::inRandomOrder()->where(['is_answer'=>'1'])->first();
+            $example = \App\Example::inRandomOrder()->where(['example_type'=>'1'])->first();
+            $created_by =array_diff([1,2,3],[$example->created_by]);
 
             DB::table('userexamples')->insert([ //,
                 'article_id'=> $example->article_id,
@@ -58,7 +48,7 @@ class CreateUserExamplesTable extends Migration
                 'example_status' => (string) $faker->randomElement(['1']),
                 'example_type' => (string) '1',
                 'is_approved'=> (string) $faker->randomElement(['1']),
-                'created_by' => $example->created_by,
+                'created_by' => array_rand($created_by,1),
                 'seq_id'=>'0',
                 'updated_at'=>$faker->dateTimeThisMonth()->format('Y-m-d H:i:s')
             ]);
@@ -66,7 +56,7 @@ class CreateUserExamplesTable extends Migration
 
         for ($i = 0; $i < $limit; $i++) {
 
-            $example = \App\Example::inRandomOrder()->where(['is_answer'=>'0'])->first();
+            $example = \App\Example::inRandomOrder()->where(['example_type'=>'0'])->first();
 
             DB::table('userexamples')->insert([ //,
                 'article_id'=> $example->article_id,
@@ -77,9 +67,9 @@ class CreateUserExamplesTable extends Migration
                 'approved_by'=> $example->created_by,
                 'created_at'=>$faker->dateTimeThisMonth()->format('Y-m-d H:i:s'),
                 'example_status' => (string) $faker->randomElement(['1']),
-                'example_type' => (string) '1',
+                'example_type' => (string) '0',
                 'is_approved'=> (string) $faker->randomElement(['1','0','2']),
-                'created_by' => $example->created_by,
+                'created_by' => array_rand(array_diff([1,2,3],[$example->created_by]),1),
                 'seq_id'=>'0',
                 'updated_at'=>$faker->dateTimeThisMonth()->format('Y-m-d H:i:s')
             ]);
